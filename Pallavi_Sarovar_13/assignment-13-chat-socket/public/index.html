@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0b0b0f" />
+  <title>Obsidian Chat</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div id="toast" class="toast" role="status"></div>
+
+  <section id="loginView" class="login-view">
+    <div class="login-orbit orbit-one"></div>
+    <div class="login-orbit orbit-two"></div>
+    <div class="login-card">
+      <div class="brand-mark">✦</div>
+      <p class="eyebrow">REAL-TIME COMMUNICATION</p>
+      <h1>Obsidian<span>Chat</span></h1>
+      <p class="login-copy">A quiet, fast space for conversations that stay in the moment.</p>
+
+      <label for="usernameInput">Your name</label>
+      <input id="usernameInput" maxlength="24" autocomplete="nickname" placeholder="e.g. Pallavi" />
+
+      <label>Choose an avatar</label>
+      <div id="avatarPicker" class="avatar-picker"></div>
+
+      <button id="loginButton" class="primary-button full">Enter workspace <span>↗</span></button>
+      <p id="loginError" class="form-error"></p>
+    </div>
+  </section>
+
+  <div id="appView" class="app-shell hidden">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark small">✦</div>
+        <div>
+          <strong>Obsidian</strong>
+          <span>private realtime space</span>
+        </div>
+      </div>
+
+      <div class="topbar-room">
+        <span id="connectionDot" class="status-dot"></span>
+        <span id="connectionText">Connected</span>
+      </div>
+
+      <div class="top-actions">
+        <button id="themeToggle" class="icon-button" title="Toggle theme" aria-label="Toggle theme">☼</button>
+        <button id="mobileMembersButton" class="icon-button mobile-only" title="Members">◎</button>
+        <div id="currentUserAvatar" class="avatar mini"></div>
+      </div>
+    </header>
+
+    <div class="workspace">
+      <aside id="roomNav" class="room-nav">
+        <div class="nav-heading">
+          <span>Rooms</span>
+          <button id="createRoomButton" class="tiny-add" title="Create room">+</button>
+        </div>
+
+        <div id="roomList" class="room-list"></div>
+
+        <div class="nav-footer">
+          <div class="connection-card">
+            <span id="navConnectionDot" class="status-dot"></span>
+            <div>
+              <strong id="navConnectionText">Online</strong>
+              <small>Socket connection</small>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <main class="chat-stage">
+        <div class="chat-header">
+          <div>
+            <div class="room-title-line">
+              <span class="room-symbol">#</span>
+              <h2 id="roomTitle">general</h2>
+            </div>
+            <p id="roomDescription">A quiet place to start a conversation.</p>
+          </div>
+
+          <div class="room-actions">
+            <button id="inviteButton" class="secondary-button">Invite <span>＋</span></button>
+            <button id="membersButton" class="secondary-button members-button">Members <span id="memberCount">0</span></button>
+          </div>
+        </div>
+
+        <div id="messages" class="messages" aria-live="polite"></div>
+
+        <div id="typingIndicator" class="typing-indicator" aria-live="polite">
+          <span class="typing-dots"><i></i><i></i><i></i></span>
+          <span id="typingText"></span>
+        </div>
+
+        <form id="composer" class="composer">
+          <button type="button" id="emojiButton" class="composer-icon" title="Add a smile">☺</button>
+          <input id="messageInput" maxlength="2000" autocomplete="off" placeholder="Write something..." />
+          <button type="submit" class="send-button">Send <span>↗</span></button>
+        </form>
+      </main>
+
+      <aside id="membersPanel" class="members-panel">
+        <div class="panel-header">
+          <div>
+            <span class="eyebrow">LIVE</span>
+            <h3>Members</h3>
+          </div>
+          <button id="closeMembersButton" class="icon-button mobile-only">×</button>
+        </div>
+        <div id="membersList" class="members-list"></div>
+      </aside>
+    </div>
+  </div>
+
+  <div id="roomModal" class="modal hidden">
+    <div class="modal-card">
+      <button class="modal-close" data-close="roomModal">×</button>
+      <p class="eyebrow">NEW SPACE</p>
+      <h2>Create a room</h2>
+      <p class="modal-copy">Create it once and you'll be taken straight inside.</p>
+
+      <label for="roomNameInput">Room name</label>
+      <input id="roomNameInput" maxlength="32" placeholder="design-team" />
+
+      <label for="roomDescriptionInput">Description <span>(optional)</span></label>
+      <input id="roomDescriptionInput" maxlength="100" placeholder="A small space for the team" />
+
+      <button id="createRoomSubmit" class="primary-button full">Create & Join <span>↗</span></button>
+      <p id="roomError" class="form-error"></p>
+    </div>
+  </div>
+
+  <div id="inviteModal" class="modal hidden">
+    <div class="modal-card invite-card">
+      <button class="modal-close" data-close="inviteModal">×</button>
+      <p class="eyebrow">ROOM INVITE</p>
+      <h2>Bring someone in.</h2>
+      <p class="modal-copy">Share this link with a friend. They'll be able to join this room after logging in.</p>
+
+      <div class="invite-box">
+        <input id="inviteLinkInput" readonly />
+        <button id="copyInviteButton" class="secondary-button">Copy</button>
+      </div>
+      <p id="inviteStatus" class="success-text"></p>
+    </div>
+  </div>
+
+  <div id="dmPanel" class="dm-panel hidden">
+    <div class="dm-header">
+      <button id="closeDmButton" class="icon-button">←</button>
+      <div id="dmAvatar" class="avatar mini"></div>
+      <div class="dm-person">
+        <strong id="dmName">Direct message</strong>
+        <span>Online</span>
+      </div>
+    </div>
+    <div id="dmMessages" class="dm-messages"></div>
+    <form id="dmComposer" class="composer dm-composer">
+      <input id="dmInput" maxlength="2000" autocomplete="off" placeholder="Message..." />
+      <button type="submit" class="send-button">Send <span>↗</span></button>
+    </form>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>
